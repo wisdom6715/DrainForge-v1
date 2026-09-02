@@ -148,7 +148,7 @@ export default function Home() {
         <div className="absolute bottom-[-8rem] left-[28%] h-[28rem] w-[28rem] rounded-full bg-[#dff1e9]/55 blur-3xl" />
       </div>
 
-      <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-7 lg:px-12">
+      <header className="relative z-50 mx-auto flex max-w-7xl items-center justify-between px-6 py-7 lg:px-12 bg-[#fbfaf8]">
         <Link href="/" className="flex items-center gap-3" aria-label="DrainForge home">
           <span className="grid h-10 w-10 place-items-center rounded-[14px] bg-[#403f58] text-[#fbfaf8] shadow-[0_8px_20px_rgba(64,63,88,.16)]"><Droplets size={19} /></span>
           <span><span className="block text-[11px] font-semibold uppercase tracking-[0.32em] text-[#74718b]">Community signal</span><span className="font-serif text-xl tracking-tight text-[#403f58]">DrainForge</span></span>
