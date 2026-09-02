@@ -22,7 +22,7 @@ from .notifications import InAppNotificationSink, NotificationEvent, configured_
 app = FastAPI(title="DrainForge API", version="0.2.0", description="Resident and authority drainage reporting service")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",") if origin.strip()],
+    allow_origins=[origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173", "https://drain-forge-v1-c5z7.vercel.app/").split(",") if origin.strip()],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "X-User-Role", "X-Admin-Key"],
