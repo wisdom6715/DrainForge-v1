@@ -11,6 +11,9 @@ import { toast } from "sonner";
 import { createReport, listReports, searchReports, type Report, type ReportCategory } from "@/lib/drainforgeApi";
 import { uploadEvidence } from "@/lib/supabase";
 import { LocationPicker } from "@/components/LocationPicker";
+import HeroImage from "@/public/hero.jpg";
+
+
 
 const categories: { label: string; value: ReportCategory }[] = [
   { label: "Blocked drain", value: "blocked_drain" },
@@ -163,19 +166,17 @@ export default function Home() {
         <section className="mx-auto grid max-w-7xl items-center gap-12 px-6 pb-20 pt-12 lg:grid-cols-[1fr_0.9fr] lg:px-12 lg:pb-28 lg:pt-20">
           <div className="relative">
             <span className="editorial-corner editorial-corner--tl" />
-            <p className="mb-6 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d7ea8]"><span className="h-px w-8 bg-[#bcaed0]" /> UNILAG — AKOKA — BARIGA — IWAYA</p>
             <h1 className="max-w-2xl font-serif text-5xl leading-[0.98] tracking-[-0.045em] text-[#403f58] sm:text-7xl">Keep your community's <em className="font-normal text-[#8d7ea8]">drains flowing.</em></h1>
             <p className="mt-8 max-w-lg text-lg leading-8 text-[#74718b]">See a blocked drain, rising water, or flood risk? Send a clear signal to the people who can respond — before it becomes a flood.</p>
             <div className="mt-10 flex flex-wrap gap-3"><Button onClick={openReport} className="h-12 rounded-full bg-[#403f58] px-6 text-xs uppercase tracking-[0.18em] text-white hover:bg-[#5d5a79]">Report a problem <ArrowUpRight size={16} /></Button><a href="#reports" className="flex h-12 items-center gap-2 rounded-full border border-[#d7d2df] bg-white/35 px-6 text-xs uppercase tracking-[0.18em] text-[#5b5872] transition hover:bg-white/75">View live reports <ChevronRight size={16} /></a></div>
             <div className="mt-14 flex items-center gap-4 text-xs text-[#8e8ba0]"><span className="grid h-8 w-8 place-items-center rounded-full bg-[#e8f3eb] text-[#66917a]"><ShieldCheck size={15} /></span><span>Community-powered. Authority-connected.<br /><strong className="font-medium text-[#5b5872]">Designed for action in under 60 seconds.</strong></span></div>
           </div>
           <div className="relative min-h-[25rem] overflow-hidden rounded-[2rem] border border-white/75 bg-[#f7f1fb]/75 p-5 shadow-[0_24px_80px_rgba(100,87,130,.14)] backdrop-blur-sm sm:min-h-[31rem] lg:rotate-[1.5deg]">
-            <div className="absolute left-10 top-10 h-24 w-24 rounded-full border border-[#c3b7d5]/45" /><div className="absolute right-12 top-24 h-2 w-2 rounded-full bg-[#d9a7bd]" /><div className="absolute bottom-16 left-20 h-2 w-2 rounded-full bg-[#a2cfb6]" />
-            <div className="relative h-full overflow-hidden rounded-[1.5rem] bg-[#eee8f5]" style={{ backgroundImage: "linear-gradient(90deg, rgba(123,112,151,.07) 1px, transparent 1px), linear-gradient(rgba(123,112,151,.07) 1px, transparent 1px)", backgroundSize: "34px 34px" }}>
-              <div className="absolute left-[14%] top-[25%] h-[52%] w-[76%] rotate-[-16deg] rounded-[45%] border-[18px] border-[#dcd1e7] bg-[#e8e1ef] shadow-inner" /><div className="absolute left-[21%] top-[32%] h-[38%] w-[62%] rotate-[-16deg] rounded-[45%] border border-[#b9aec9] bg-[#d2c7db]/60" />
-              <span className="absolute left-[35%] top-[40%] grid h-12 w-12 place-items-center rounded-full border-8 border-[#f8e2eb] bg-[#d291ad] text-white shadow-lg"><Waves size={18} fill="currentColor" /></span><span className="absolute right-[23%] top-[58%] grid h-10 w-10 place-items-center rounded-full border-8 border-[#e2f3e7] bg-[#77a88e] text-white shadow-lg"><Waves size={15} fill="currentColor" /></span>
-              <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/80 bg-white/78 p-4 shadow-lg backdrop-blur"><div className="flex items-center justify-between"><div><p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8d7ea8]">Live corridor pulse</p><p className="mt-1 font-serif text-lg text-[#403f58]">{liveReports.length > 0 ? `${liveReports.length} reports showing` : "Awaiting first report"}</p></div><span className="flex items-center gap-1.5 text-xs text-[#6b9b7e]"><span className="h-2 w-2 rounded-full bg-[#77a88e]" /> Updating now</span></div></div>
-            </div>
+            <img
+              src={HeroImage}
+              alt="DrainForge"
+              className="absolute inset-0 h-full w-full object-cover"
+            />          
           </div>
         </section>
 
