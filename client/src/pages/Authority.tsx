@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { Activity, ArrowLeft, Check, Clock, Droplets, KeyRound, Lock, MapPin, RefreshCw, Search, ShieldCheck, TrendingUp } from "lucide-react";
+import { Activity, ArrowLeft, Check, Clock, Droplets, KeyRound, Lock, MapPin, Phone, RefreshCw, Search, ShieldCheck, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -193,6 +193,15 @@ function AdminConsole({ adminKey, onLock }: { adminKey: string; onLock: () => vo
                       <div className="flex flex-wrap items-center gap-2"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8d7ea8]">{item.reference}</span><span className="text-[10px] text-[#b0aaba]">{relativeTime(item.created_at)}</span></div>
                       <Link href={`/reports/${item.reference}`}><h3 className="mt-1 font-serif text-lg text-[#403f58] hover:underline">{item.title}</h3></Link>
                       <p className="mt-1 text-xs text-[#858096]">{categoryLabel(item.category)} <span className="px-1 text-[#c7c0ce]">·</span> {item.severity} severity</p>
+                      {item.reporter_phone && (
+                        <a
+                          href={`tel:${item.reporter_phone}`}
+                          onClick={(event) => event.stopPropagation()}
+                          className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[#6b9b7e] hover:underline"
+                        >
+                          <Phone size={12} /> {item.reporter_phone}
+                        </a>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-[#74718b]"><MapPin size={14} className="text-[#9a8bb0]" /> {item.area || "—"}</div>

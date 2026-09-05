@@ -70,10 +70,8 @@ class ReportCreate(BaseModel):
     address: Optional[str] = Field(default=None, max_length=300)
     area: Optional[str] = Field(default=None, max_length=120)
     location_accuracy: Optional[float] = Field(default=None, ge=0)
-    # Storage paths the client already uploaded to the "report-evidence"
-    # Supabase bucket (see src/lib/supabase.ts -> uploadEvidence()).
+    reporter_phone: Optional[str] = Field(default=None, max_length=20)  # NEW
     evidence_paths: list[str] = Field(default_factory=list, max_length=3)
-
 
 class ReportResponse(BaseModel):
     id: str
@@ -91,6 +89,13 @@ class ReportResponse(BaseModel):
     status: ReportStatus
     created_at: str
     resolved_at: Optional[str] = None
+
+class AdminReportResponse(ReportResponse):
+    reporter_phone: Optional[str] = None
+
+
+class AdminReportListResponse(BaseModel):
+    items: list[AdminReportResponse]
 
 
 class ReportListResponse(BaseModel):
@@ -159,15 +164,24 @@ def get_report(reference: str) -> ReportResponse:
     return ReportResponse(**record)
 
 
-@app.patch("/api/v1/reports/{reference}/status", response_model=ReportResponse)
-def update_report_status(reference: str, payload: StatusUpdate, _: str = Depends(require_admin_key)) -> ReportResponse:
+@app.patch("/api/v1/reports/{reference}/status", response_model=AdminReportResponse)  # was ReportResponse
+def update_report_status(reference: str, payload: StatusUpdate, _: str = Depends(require_admin_key)) -> AdminReportResponse:
     record = reports_store.update_status(reference, payload.status.value)
     if not record:
         raise HTTPException(status_code=404, detail="Report not found")
     event = NotificationEvent.REPORT_RESOLVED if payload.status is ReportStatus.RESOLVED else NotificationEvent.REPORT_CREATED
     InAppNotificationSink(configured_supabase_client()).send(notification_for(event, record["reference"]), [])
-    return ReportResponse(**record)
+    return AdminReportResponse(**record)
 
+
+@app.get("/api/v1/admin/reports", response_model=AdminReportListResponse)  # was ReportListResponse
+def admin_list_reports(
+    status_filter: Optional[ReportStatus] = Query(default=None, alias="status"),
+    limit: int = Query(default=200, ge=1, le=500),
+    _: str = Depends(require_admin_key),
+) -> AdminReportListResponse:
+    items = reports_store.list_reports(status=status_filter.value if status_filter else None, limit=limit)
+    return AdminReportListResponse(items=[AdminReportResponse(**item) for item in items])
 
 @app.post("/api/v1/admin/login")
 def admin_login(payload: AdminLoginRequest) -> dict[str, bool]:

@@ -66,6 +66,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const progress = useMemo(() => Math.round((step / 4) * 100), [step]);
+  const [phone, setPhone] = useState("");
 
   const loadReports = () => {
     setLoadingReports(true);
@@ -98,6 +99,7 @@ export default function Home() {
     setSubmitted(false);
     setTitle("");
     setDescription("");
+    setPhone("");
     setEvidenceFiles([]);
     setTrackingReference("");
     setReportOpen(true);
@@ -127,6 +129,7 @@ export default function Home() {
         address: location.address,
         area: location.address,
         location_accuracy: location.accuracy,
+        reporter_phone: phone.trim() || undefined,
         evidence_paths: evidencePaths,
       });
       setTrackingReference(result.reference);
@@ -224,7 +227,118 @@ export default function Home() {
 
       <footer className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-[#e5e0e8] px-6 py-8 text-xs text-[#9290a2] sm:flex-row sm:items-center sm:justify-between lg:px-12"><span>© 2026 DrainForge · Pilot corridor, Lagos</span><span className="flex items-center gap-2"><Sparkles size={13} className="text-[#b7a8c8]" /> Built for earlier action.</span></footer>
 
-      <Dialog open={isReportOpen} onOpenChange={setReportOpen}><DialogContent className="max-w-xl rounded-[1.7rem] border-white/80 bg-[#fffdfa]/95 p-0 text-[#403f58] shadow-2xl backdrop-blur-xl"><div className="p-7 sm:p-9">{submitted ? <div className="py-8 text-center"><span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#e4f2e8] text-[#6b9b7e]"><Check size={30} /></span><DialogTitle className="mt-6 font-serif text-3xl">Report received.</DialogTitle><DialogDescription className="mx-auto mt-3 max-w-sm text-sm leading-6 text-[#858096]">Thank you for helping keep the corridor clear. Your tracking reference is ready — save it to check progress any time.</DialogDescription><div className="mx-auto mt-7 max-w-xs rounded-2xl bg-[#f4eff8] p-4"><p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8d7ea8]">Report ID</p><p className="mt-1 font-serif text-2xl text-[#403f58]">{trackingReference || "Awaiting reference"}</p><p className="mt-1 text-xs text-[#858096]">Status · Pending</p></div><div className="mt-6 flex justify-center gap-3"><Button onClick={() => setReportOpen(false)} className="rounded-full bg-[#403f58] px-6 text-xs uppercase tracking-[0.18em]">Done</Button>{trackingReference && <Link href={`/reports/${trackingReference}`}><Button variant="outline" onClick={() => setReportOpen(false)} className="rounded-full border-[#d8cfe0] bg-transparent px-6 text-xs uppercase tracking-[0.18em]">Track it</Button></Link>}</div></div> : <><DialogHeader><div className="mb-4 flex items-center justify-between"><span className="eyebrow">Quick report · {progress}%</span><span className="text-xs text-[#9b96a9]">Step {step} of 4</span></div><div className="mb-6 h-1 overflow-hidden rounded-full bg-[#eee9f1]"><div className="h-full rounded-full bg-[#8d7ea8] transition-all duration-300" style={{ width: `${progress}%` }} /></div><DialogTitle className="font-serif text-3xl">{step === 1 ? "What did you notice?" : step === 2 ? "Where is it?" : step === 3 ? "Add some evidence." : "A little more context."}</DialogTitle><DialogDescription className="mt-2 text-sm text-[#858096]">{step === 1 ? "Choose the closest description and give it a short title." : step === 2 ? "Your location helps the response team route the work." : step === 3 ? "A photo makes verification faster, but it is optional." : "Tell the team what is happening in your own words."}</DialogDescription></DialogHeader>{step === 1 && <><div className="mt-7 grid grid-cols-2 gap-3">{categories.map((item) => <button key={item.value} onClick={() => setCategory(item.value)} className={`rounded-2xl border p-4 text-left text-sm transition ${category === item.value ? "border-[#a896bc] bg-[#f0e9f7] text-[#403f58]" : "border-[#e5e0e8] bg-white/45 text-[#858096] hover:bg-white"}`}><span className="mb-5 block text-lg">{categoryIcon[item.value]}</span><span className="font-medium">{item.label}</span></button>)}</div><div className="mt-5"><p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9b96a9]">Short title</p><Input value={title} onChange={(event) => setTitle(event.target.value.slice(0, 120))} placeholder="e.g. Blocked culvert on Herbert Macaulay Way" className="rounded-xl border-[#ded8e4] bg-white/55 text-sm text-[#403f58] placeholder:text-[#b1acba]" /></div><div className="mt-4"><p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9b96a9]">Severity</p><div className="flex flex-wrap gap-2">{["low", "medium", "high", "critical"].map((item) => <button key={item} onClick={() => setSeverity(item)} className={`rounded-full border px-3 py-2 text-[10px] uppercase tracking-[0.14em] ${severity === item ? "border-[#a896bc] bg-[#eee6f7] text-[#5b5872]" : "border-[#e5e0e8] text-[#9b96a9]"}`}>{item}</button>)}</div></div></>}{step === 2 && <div className="mt-7"><LocationPicker value={location} onChange={setLocation} /></div>}{step === 3 && <div className="mt-7 grid place-items-center rounded-2xl border border-dashed border-[#cfc5da] bg-[#faf7fb] px-5 py-12 text-center"><span className="grid h-14 w-14 place-items-center rounded-full bg-[#eee6f7] text-[#8d7ea8]"><Camera size={22} /></span><p className="mt-4 text-sm font-medium text-[#5b5872]">Add a photo</p><p className="mt-1 text-xs text-[#9b96a9]">Photos help authorities verify the problem and show on the report card.</p><label className="mt-5 inline-flex cursor-pointer items-center rounded-full border border-[#d8cfe0] bg-white/60 px-4 py-2 text-xs uppercase tracking-[0.16em] text-[#5b5872]"><input type="file" accept="image/*" className="sr-only" onChange={(event) => setEvidenceFiles(Array.from(event.target.files ?? []).slice(0, 1))} />+ Add photo</label>{evidenceFiles.length > 0 && <p className="mt-3 text-xs text-[#858096]">{evidenceFiles[0].name} selected</p>}</div>}{step === 4 && <div className="mt-7"><Textarea value={description} onChange={(event) => setDescription(event.target.value.slice(0, 500))} placeholder="Large amount of plastic waste is blocking the drainage entrance..." className="min-h-32 resize-none rounded-2xl border-[#ded8e4] bg-white/55 p-4 text-sm text-[#403f58] placeholder:text-[#b1acba]" /><div className="mt-2 text-right text-xs text-[#9b96a9]">{description.length} / 500</div></div>}<div className="mt-8 flex justify-between gap-3">{step > 1 ? <Button variant="outline" onClick={() => setStep(step - 1)} className="rounded-full border-[#d8cfe0] bg-transparent text-xs uppercase tracking-[0.15em]">Back</Button> : <span />}{step < 4 ? <Button onClick={() => setStep(step + 1)} className="rounded-full bg-[#403f58] px-6 text-xs uppercase tracking-[0.15em]">Continue <ChevronRight size={15} /></Button> : <Button onClick={submitReport} disabled={submitting} className="rounded-full bg-[#403f58] px-6 text-xs uppercase tracking-[0.15em]">{submitting ? "Submitting…" : "Submit report"} <ArrowUpRight size={15} /></Button>}</div></>}</div></DialogContent></Dialog>
+      <Dialog open={isReportOpen} onOpenChange={setReportOpen}>
+        <DialogContent className="max-w-xl rounded-[1.7rem] border-white/80 bg-[#fffdfa]/95 p-0 text-[#403f58] shadow-2xl backdrop-blur-xl">
+          <div className="p-7 sm:p-9">
+            {submitted ? (
+              <div className="py-8 text-center">
+                <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#e4f2e8] text-[#6b9b7e]"><Check size={30} /></span>
+                <DialogTitle className="mt-6 font-serif text-3xl">Report received.</DialogTitle>
+                <DialogDescription className="mx-auto mt-3 max-w-sm text-sm leading-6 text-[#858096]">Thank you for helping keep the corridor clear. Your tracking reference is ready — save it to check progress any time.</DialogDescription>
+                <div className="mx-auto mt-7 max-w-xs rounded-2xl bg-[#f4eff8] p-4">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8d7ea8]">Report ID</p>
+                  <p className="mt-1 font-serif text-2xl text-[#403f58]">{trackingReference || "Awaiting reference"}</p>
+                  <p className="mt-1 text-xs text-[#858096]">Status · Pending</p>
+                </div>
+                <div className="mt-6 flex justify-center gap-3">
+                  <Button onClick={() => setReportOpen(false)} className="rounded-full bg-[#403f58] px-6 text-xs uppercase tracking-[0.18em]">Done</Button>
+                  {trackingReference && <Link href={`/reports/${trackingReference}`}><Button variant="outline" onClick={() => setReportOpen(false)} className="rounded-full border-[#d8cfe0] bg-transparent px-6 text-xs uppercase tracking-[0.18em]">Track it</Button></Link>}
+                </div>
+              </div>
+            ) : (
+              <>
+                <DialogHeader>
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="eyebrow">Quick report · {progress}%</span>
+                    <span className="text-xs text-[#9b96a9]">Step {step} of 4</span>
+                  </div>
+                  <div className="mb-6 h-1 overflow-hidden rounded-full bg-[#eee9f1]"><div className="h-full rounded-full bg-[#8d7ea8] transition-all duration-300" style={{ width: `${progress}%` }} /></div>
+                  <DialogTitle className="font-serif text-3xl">{step === 1 ? "What did you notice?" : step === 2 ? "Where is it?" : step === 3 ? "Add some evidence." : "A little more context."}</DialogTitle>
+                  <DialogDescription className="mt-2 text-sm text-[#858096]">{step === 1 ? "Choose the closest description and give it a short title." : step === 2 ? "Your location helps the response team route the work." : step === 3 ? "A photo makes verification faster, but it is optional." : "Tell the team what is happening in your own words."}</DialogDescription>
+                </DialogHeader>
+
+                {step === 1 && (
+                  <>
+                    <div className="mt-7 grid grid-cols-2 gap-3">
+                      {categories.map((item) => (
+                        <button key={item.value} onClick={() => setCategory(item.value)} className={`rounded-2xl border p-4 text-left text-sm transition ${category === item.value ? "border-[#a896bc] bg-[#f0e9f7] text-[#403f58]" : "border-[#e5e0e8] bg-white/45 text-[#858096] hover:bg-white"}`}>
+                          <span className="mb-5 block text-lg">{categoryIcon[item.value]}</span>
+                          <span className="font-medium">{item.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-5">
+                      <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9b96a9]">Short title</p>
+                      <Input value={title} onChange={(event) => setTitle(event.target.value.slice(0, 120))} placeholder="e.g. Blocked culvert on Herbert Macaulay Way" className="rounded-xl border-[#ded8e4] bg-white/55 text-sm text-[#403f58] placeholder:text-[#b1acba]" />
+                    </div>
+                    <div className="mt-4">
+                      <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9b96a9]">Severity</p>
+                      <div className="flex flex-wrap gap-2">
+                        {["low", "medium", "high", "critical"].map((item) => (
+                          <button key={item} onClick={() => setSeverity(item)} className={`rounded-full border px-3 py-2 text-[10px] uppercase tracking-[0.14em] ${severity === item ? "border-[#a896bc] bg-[#eee6f7] text-[#5b5872]" : "border-[#e5e0e8] text-[#9b96a9]"}`}>{item}</button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {step === 2 && (
+                  <div className="mt-7">
+                    <LocationPicker value={location} onChange={setLocation} />
+                  </div>
+                )}
+
+                {step === 3 && (
+                  <div className="mt-7 grid place-items-center rounded-2xl border border-dashed border-[#cfc5da] bg-[#faf7fb] px-5 py-12 text-center">
+                    <span className="grid h-14 w-14 place-items-center rounded-full bg-[#eee6f7] text-[#8d7ea8]"><Camera size={22} /></span>
+                    <p className="mt-4 text-sm font-medium text-[#5b5872]">Add a photo</p>
+                    <p className="mt-1 text-xs text-[#9b96a9]">Photos help authorities verify the problem and show on the report card.</p>
+                    <label className="mt-5 inline-flex cursor-pointer items-center rounded-full border border-[#d8cfe0] bg-white/60 px-4 py-2 text-xs uppercase tracking-[0.16em] text-[#5b5872]">
+                      <input type="file" accept="image/*" className="sr-only" onChange={(event) => setEvidenceFiles(Array.from(event.target.files ?? []).slice(0, 1))} />+ Add photo
+                    </label>
+                    {evidenceFiles.length > 0 && <p className="mt-3 text-xs text-[#858096]">{evidenceFiles[0].name} selected</p>}
+                  </div>
+                )}
+
+                {step === 4 && (
+                  <div className="mt-7 space-y-5">
+                    <div>
+                      <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9b96a9]">Phone number</p>
+                      <Input
+                        type="tel"
+                        value={phone}
+                        onChange={(event) => setPhone(event.target.value.slice(0, 20))}
+                        placeholder="e.g. 0803 123 4567"
+                        className="rounded-xl border-[#ded8e4] bg-white/55 text-sm text-[#403f58] placeholder:text-[#b1acba]"
+                      />
+                      <p className="mt-1 text-[11px] text-[#9b96a9]">Shared only with the response team, in case they need to confirm details with you.</p>
+                    </div>
+                    <div>
+                      <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#9b96a9]">Description</p>
+                      <Textarea
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value.slice(0, 500))}
+                        placeholder="Large amount of plastic waste is blocking the drainage entrance..."
+                        className="min-h-32 resize-none rounded-2xl border-[#ded8e4] bg-white/55 p-4 text-sm text-[#403f58] placeholder:text-[#b1acba]"
+                      />
+                      <div className="mt-2 text-right text-xs text-[#9b96a9]">{description.length} / 500</div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-8 flex justify-between gap-3">
+                  {step > 1 ? <Button variant="outline" onClick={() => setStep(step - 1)} className="rounded-full border-[#d8cfe0] bg-transparent text-xs uppercase tracking-[0.15em]">Back</Button> : <span />}
+                  {step < 4 ? (
+                    <Button onClick={() => setStep(step + 1)} className="rounded-full bg-[#403f58] px-6 text-xs uppercase tracking-[0.15em]">Continue <ChevronRight size={15} /></Button>
+                  ) : (
+                    <Button onClick={submitReport} disabled={submitting} className="rounded-full bg-[#403f58] px-6 text-xs uppercase tracking-[0.15em]">{submitting ? "Submitting…" : "Submit report"} <ArrowUpRight size={15} /></Button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

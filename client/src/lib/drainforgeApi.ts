@@ -34,6 +34,7 @@ export interface Report {
   image_url?: string | null;
   status: ReportStatus;
   created_at: string;
+  reporter_phone?: string | null;
   resolved_at?: string | null;
 }
 
@@ -47,6 +48,7 @@ export interface ReportCreateInput {
   address?: string;
   area?: string;
   location_accuracy?: number;
+  reporter_phone?: string;
   evidence_paths?: string[];
 }
 
